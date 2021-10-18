@@ -7,43 +7,45 @@ import Review from "./Review"
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
-const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptureCheckout }) => {
-    // const handleSubmit = async (event, elements, stripe) => {
-    //     event.preventDefault();
+const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptureCheckout, timeout }) => {
+    const handleSubmit = async (event, elements, stripe) => {
+        event.preventDefault();
 
-    //     if(!stripe || !elements) return;
+        if(!stripe || !elements) return;
 
-    //     const cardElement = elements.getElements(CardElement);
+        const cardElement = elements.getElement(CardElement);
 
-    //     const { error, paymentMethod } = await stripe.createPaymentMethod({ type: 'card', card: cardElement });
+        const { error, paymentMethod } = await stripe.createPaymentMethod({ type: 'card', card: cardElement });
 
-    //     if(error) {
-    //         console.log(error);
-    //     } else {
-    //         const orderData = {
-    //             line_items: checkoutToken.live.line_items,
-    //             customer: { firstname: shippingData.firstName, lastname: shippingData.lastName, email: shippingData.email },
-    //             shipping: { 
-    //             name: 'Primary', 
-    //             street: shippingData.address1, 
-    //             town_city: shippingData.city, 
-    //             county_state: shippingData.shippingSubdivision,
-    //             postal_zip_code: shippingData.zip,
-    //             country: shippingData.shippingCountry
-    //             },
-    //             fufillment: { shipping_method: shippingData.shippingOption },
-    //             payment: {
-    //                 gateway: 'stripe',
-    //                 stripe: {
-    //                     payment_method_id: paymentMethod.id
-    //                 }
-    //             }
-    //         }
-    //         onCaptureCheckout(checkoutToken.id, orderData);
+        if(error) {
+            console.log(error);
+        } else {
+            const orderData = {
+                line_items: checkoutToken.live.line_items,
+                customer: { firstname: shippingData.firstName, lastname: shippingData.lastName, email: shippingData.email },
+                shipping: { 
+                name: 'Primary', 
+                street: shippingData.address1, 
+                town_city: shippingData.city, 
+                county_state: shippingData.shippingSubdivision,
+                postal_zip_code: shippingData.zip,
+                country: shippingData.shippingCountry
+                },
+                fufillment: { shipping_method: shippingData.shippingOption },
+                payment: {
+                    gateway: 'stripe',
+                    stripe: {
+                        payment_method_id: paymentMethod.id
+                    }
+                }
+            }
+            onCaptureCheckout(checkoutToken.id, orderData);
 
-    //         nextStep();
-    //     }
-    // }
+            timeout();
+
+            nextStep();
+        }
+    };
 
     return (
         <>
@@ -53,8 +55,8 @@ const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptur
             <Elements stripe={stripePromise}>
                 <ElementsConsumer>
                     {({ elements, stripe }) => (
-                        // <form onSubmit={(e) => handleSubmit(e, elements, stripe)}>
-                        <form>
+                        <form onSubmit={(e) => handleSubmit(e, elements, stripe)}>
+                        {/* <form> */}
                             <CardElement />
                             <br />
                             <br />
