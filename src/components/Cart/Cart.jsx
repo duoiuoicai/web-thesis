@@ -10,7 +10,7 @@ const Cart = ({ cart, handleUpdateCartQty, handleRemoveFromCart, handleEmtyCart 
     // const isEmty = true;
     
     const EmtyCart = () => (
-        <Typography variant="subtitle1">You have no items in your cart, <Link to="/" className={classes.link}>start shopping now</Link>!</Typography>
+        <Typography variant="subtitle1">You have no items in your cart, <Link to="/" className={classes.link} color="inherit">start shopping now</Link>!</Typography>
     );
 
     const FilledCart = () => (
